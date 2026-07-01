@@ -570,7 +570,7 @@ function Toolbar({
 function MethodologyStrip({ weights }: { weights: Weights }) {
   const sum = Object.values(weights).reduce((a, b) => a + b, 0) || 1;
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-white p-5 shadow-sm">
+    <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-sm font-semibold tracking-tight">Ranking methodology</h2>
         <span className="text-xs text-muted-foreground">
