@@ -93,9 +93,43 @@ interface InstagramAccount {
   };
 }
 
+interface TikTokAccount {
+  id: number;
+  username: string;
+  followers: number;
+  engagement_rate: number; // percent
+  average_likes: number;
+  average_comments: number;
+  average_shares?: number;
+  average_plays?: number; // views on TikTok
+  verified: boolean;
+  engagement_growth_rate?: number;
+  community_growth_rate?: number | null;
+}
+
+interface YouTubeAccount {
+  id: number;
+  username: string;
+  followers: number; // subscribers
+  engagement_rate: number; // percent
+  average_views?: number;
+  average_likes?: number;
+  average_comments?: number;
+  verified: boolean;
+  engagement_growth_rate?: number;
+  community_growth_rate?: number | null;
+}
+
 interface ProfileResponse {
-  influencer: SearchInfluencer & { instagram_id: number | null; email?: string };
+  influencer: SearchInfluencer & { 
+    instagram_id: number | null; 
+    youtube_id: number | null;
+    tiktok_id: number | null;
+    email?: string; 
+  };
   instagrams?: InstagramAccount[];
+  tiktoks?: TikTokAccount[];
+  youtubes?: YouTubeAccount[];
 }
 
 // --- Industry queries (keywords) ---
@@ -157,9 +191,27 @@ export interface RankedCreator {
     engagement_rate: number; // percent
     average_likes: number;
     average_comments: number;
-    average_views: number;
     verified: boolean;
     engagement_growth_rate: number;
+    profile_url: string;
+  } | null;
+  tiktok: {
+    username: string;
+    followers: number;
+    engagement_rate: number; // percent
+    average_likes: number;
+    average_comments: number;
+    average_plays: number; // views
+    verified: boolean;
+    profile_url: string;
+  } | null;
+  youtube: {
+    username: string;
+    followers: number; // subscribers
+    engagement_rate: number; // percent
+    average_views: number;
+    average_likes: number;
+    verified: boolean;
     profile_url: string;
   } | null;
   signals: {
@@ -283,11 +335,30 @@ export async function getIndustryLeaderboard(
     const ig = profile.instagrams?.[0];
     if (!ig || !ig.followers) continue;
 
-    const avgViews = ig.media_stats?.video?.average_views ?? 0;
+    const tt = profile.tiktoks?.[0] || null;
+    const yt = profile.youtubes?.[0] || null;
+
+    // Use video metrics from the platform with the most views to score resonance
+    let avgViews = 0;
+    let resonanceFollowers = ig.followers;
+
+    if (yt && yt.average_views) {
+      avgViews = yt.average_views;
+      resonanceFollowers = yt.followers;
+    }
+    if (tt && tt.average_plays && tt.average_plays > avgViews) {
+      avgViews = tt.average_plays;
+      resonanceFollowers = tt.followers;
+    }
+    if (avgViews === 0) {
+      avgViews = ig.media_stats?.video?.average_views ?? 0;
+      resonanceFollowers = ig.followers;
+    }
+
     const signals = {
       reach: scoreReach(ig.followers),
       engagement: scoreEngagement(ig.engagement_rate),
-      resonance: scoreResonance(avgViews, ig.followers),
+      resonance: scoreResonance(avgViews, resonanceFollowers),
       relevance: scoreRelevance(base.categories, meta.category_hints),
       professionalism: scoreProfessionalism(ig, base.has_email),
     };
@@ -314,11 +385,29 @@ export async function getIndustryLeaderboard(
         engagement_rate: ig.engagement_rate,
         average_likes: ig.average_likes,
         average_comments: ig.average_comments,
-        average_views: avgViews,
         verified: ig.verified,
         engagement_growth_rate: ig.engagement_growth_rate ?? 0,
         profile_url: `https://instagram.com/${ig.username}`,
       },
+      tiktok: tt ? {
+        username: tt.username,
+        followers: tt.followers,
+        engagement_rate: tt.engagement_rate,
+        average_likes: tt.average_likes,
+        average_comments: tt.average_comments,
+        average_plays: tt.average_plays ?? 0,
+        verified: tt.verified,
+        profile_url: `https://tiktok.com/@${tt.username}`,
+      } : null,
+      youtube: yt ? {
+        username: yt.username,
+        followers: yt.followers,
+        engagement_rate: yt.engagement_rate,
+        average_views: yt.average_views ?? 0,
+        average_likes: yt.average_likes ?? 0,
+        verified: yt.verified,
+        profile_url: `https://youtube.com/@${yt.username}`,
+      } : null,
       signals,
       composite_score: Math.round(composite * 10) / 10,
     });
