@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import {
+  Sun,
+  Moon,
   Settings,
   Search,
   SlidersHorizontal,
@@ -322,8 +324,30 @@ function DashboardPage() {
 }
 
 function Header({ onOpenSettings }: { onOpenSettings: () => void }) {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("upfluence:theme");
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (isDark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("upfluence:theme", "light");
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("upfluence:theme", "dark");
+      setIsDark(true);
+    }
+  };
+
   return (
-    <header className="border-b border-border bg-white/70 backdrop-blur">
+    <header className="border-b border-border bg-card/70 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <img src="/favicon.png" alt="Upfluence logo" className="h-9 w-9 object-contain" />
@@ -332,14 +356,26 @@ function Header({ onOpenSettings }: { onOpenSettings: () => void }) {
             <p className="text-xs text-muted-foreground">Influencer Pulse</p>
           </div>
         </div>
-        <button
-          onClick={onOpenSettings}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
-          aria-label="Formula Engine Settings"
-          title="Formula Engine Settings"
-        >
-          <Settings className="h-4 w-4" />
-        </button>
+        
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleDarkMode}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+            aria-label="Toggle Dark Mode"
+            title="Toggle Dark Mode"
+          >
+            {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <button
+            onClick={onOpenSettings}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+            aria-label="Formula Engine Settings"
+            title="Formula Engine Settings"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </header>
   );
