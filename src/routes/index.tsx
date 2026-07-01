@@ -822,12 +822,13 @@ function ModalShell({ title, subtitle, onClose, children, wide }: { title: strin
 function SettingsModal({ weights, onSave, onClose }: { weights: Weights; onSave: (w: Weights) => void; onClose: () => void }) {
   const [draft, setDraft] = useState<Weights>(weights);
   const sum = Object.values(draft).reduce((a, b) => a + b, 0);
+  const isValid = sum === 100;
+
   return (
-    <ModalShell title="Formula Engine Settings" subtitle="Adjust the weight of each ranking signal. Scores are normalized to 100%." onClose={onClose}>
+    <ModalShell title="Formula Engine Settings" subtitle="Set your percentage for each vector. Total must equal exactly 100%." onClose={onClose}>
       <div className="space-y-4">
         {SIGNAL_META.map((s) => {
           const v = draft[s.key];
-          const pct = sum > 0 ? Math.round((v / sum) * 100) : 0;
           return (
             <div key={s.key}>
               <div className="flex items-baseline justify-between">
@@ -836,8 +837,7 @@ function SettingsModal({ weights, onSave, onClose }: { weights: Weights; onSave:
                   <div className="text-[11px] text-muted-foreground">{s.desc}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-sm font-semibold text-primary">{v}</div>
-                  <div className="text-[10px] text-muted-foreground">{pct}% weight</div>
+                  <div className="font-mono text-sm font-semibold text-primary">{v}%</div>
                 </div>
               </div>
               <input
@@ -853,13 +853,30 @@ function SettingsModal({ weights, onSave, onClose }: { weights: Weights; onSave:
           );
         })}
       </div>
+
+      {/* Live total visual layout row */}
+      <div className="mt-4 rounded-xl border border-dashed p-3 bg-secondary/30 flex items-center justify-between">
+        <span className="text-xs font-semibold text-muted-foreground">Current total sum:</span>
+        <span className={`font-mono text-sm font-bold ${isValid ? "text-green-600" : "text-destructive"}`}>
+          {sum}% / 100% {isValid ? "✓ Ready" : `(Needs ${100 - sum > 0 ? "plus " : ""}${100 - sum}%)`}
+        </span>
+      </div>
+
       <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
         <button onClick={() => setDraft(DEFAULT_WEIGHTS)} className="text-xs font-medium text-muted-foreground hover:text-primary">
           Reset to defaults
         </button>
         <div className="flex gap-2">
           <button onClick={onClose} className="rounded-full border border-border bg-white px-4 py-2 text-sm hover:bg-secondary">Cancel</button>
-          <button onClick={() => onSave(draft)} className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+          <button 
+            onClick={() => onSave(draft)} 
+            disabled={!isValid}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
+              isValid 
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer" 
+                : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
+            }`}
+          >
             Save weights
           </button>
         </div>
