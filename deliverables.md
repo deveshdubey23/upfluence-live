@@ -11,7 +11,7 @@ The platform uses a secure, split-level system built to protect our API data acc
 
 * **Core Code Base:** Bun (Runtime), TanStack Start & Router (Full-stack Framework), TypeScript.
 * **Design & Styling:** Tailwind CSS v4 using high-fidelity color spaces for crisp visual contrast.
-* **Data Export:** Live browser-to-spreadsheet data conversion engine (`xlsx`).
+* **Data Export:** Live browser-to-spreadsheet data conversion engine (`xlsx`)
 * **AI Accelerators:** * *Lovable.dev:* For hyper-rapid dashboard layout creation and baseline responsive views.
 * *Gemini:* Used as specialized architectural pairs to map out data models and write formulas.
 ---
