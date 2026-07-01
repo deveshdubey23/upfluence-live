@@ -402,7 +402,7 @@ function IndustryTabs({
               "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all " +
               (active
                 ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                : "border-border bg-white text-foreground hover:border-primary/40 hover:bg-secondary")
+                : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-secondary")
             }
           >
             <span aria-hidden>{i.emoji}</span>
@@ -823,7 +823,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 
 function Footer() {
   return (
-    <footer className="border-t border-border bg-white">
+    <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-6xl px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
         Built with the Upfluence Public API. Rankings are computed on-the-fly from live creator signals and cached briefly to respect API rate limits.
       </div>
