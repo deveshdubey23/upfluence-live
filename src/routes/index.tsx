@@ -322,30 +322,8 @@ function DashboardPage() {
 }
 
 function Header({ onOpenSettings }: { onOpenSettings: () => void }) {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("upfluence:theme");
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("upfluence:theme", "light");
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("upfluence:theme", "dark");
-      setIsDark(true);
-    }
-  };
-
   return (
-    <header className="border-b border-border bg-card/70 backdrop-blur">
+    <header className="border-b border-border bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <img src="/favicon.png" alt="Upfluence logo" className="h-9 w-9 object-contain" />
@@ -354,26 +332,14 @@ function Header({ onOpenSettings }: { onOpenSettings: () => void }) {
             <p className="text-xs text-muted-foreground">Influencer Pulse</p>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleDarkMode}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
-            aria-label="Toggle Dark Mode"
-            title="Toggle Dark Mode"
-          >
-            {isDark ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4" />}
-          </button>
-
-          <button
-            onClick={onOpenSettings}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
-            aria-label="Formula Engine Settings"
-            title="Formula Engine Settings"
-          >
-            <Settings className="h-4 w-4" />
-          </button>
-        </div>
+        <button
+          onClick={onOpenSettings}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+          aria-label="Formula Engine Settings"
+          title="Formula Engine Settings"
+        >
+          <Settings className="h-4 w-4" />
+        </button>
       </div>
     </header>
   );
@@ -400,7 +366,7 @@ function IndustryTabs({
               "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all " +
               (active
                 ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-secondary")
+                : "border-border bg-white text-foreground hover:border-primary/40 hover:bg-secondary")
             }
           >
             <span aria-hidden>{i.emoji}</span>
@@ -568,7 +534,7 @@ function Toolbar({
 function MethodologyStrip({ weights }: { weights: Weights }) {
   const sum = Object.values(weights).reduce((a, b) => a + b, 0) || 1;
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <div className="mt-6 rounded-2xl border border-border bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-sm font-semibold tracking-tight">Ranking methodology</h2>
         <span className="text-xs text-muted-foreground">
@@ -821,7 +787,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 
 function Footer() {
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border bg-white">
       <div className="mx-auto max-w-6xl px-4 py-6 text-xs text-muted-foreground sm:px-6 lg:px-8">
         Built with the Upfluence Public API. Rankings are computed on-the-fly from live creator signals and cached briefly to respect API rate limits.
       </div>
