@@ -325,9 +325,7 @@ function Header({ onOpenSettings }: { onOpenSettings: () => void }) {
     <header className="border-b border-border bg-white/70 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-            <span className="text-sm font-bold">Up</span>
-          </div>
+          <img src={upfluenceLogo.url} alt="Upfluence logo" className="h-9 w-9 object-contain" />
           <div>
             <h1 className="text-base font-semibold tracking-tight">Upfluence</h1>
             <p className="text-xs text-muted-foreground">Influencer Pulse</p>
