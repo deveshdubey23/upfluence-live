@@ -272,13 +272,11 @@ function clamp(n: number, min = 0, max = 100) {
 }
 
 function scoreReach(followers: number): number {
-  // Log scale: 100k -> ~50, 1M -> ~75, 10M -> ~100
   if (followers <= 0) return 0;
   return clamp(((Math.log10(followers) - 4) / 3) * 100);
 }
 function scoreEngagement(er: number): number {
-  // ER in percent. 1% = 25, 3% = 75, >=4% = 100
-  return clamp((er / 4) * 100);
+  return clamp(((er || 0) / 4) * 100);
 }
 function scoreResonance(avgViews: number, followers: number): number {
   if (!avgViews || !followers) return 0;
@@ -294,7 +292,6 @@ function scoreRelevance(
     hints.some((h) => c.name.toLowerCase().includes(h.toLowerCase())),
   );
   if (match) return clamp(50 + match.similarity * 100);
-  // fall back to top similarity as generic relevance signal
   return clamp((categories[0]?.similarity ?? 0.4) * 100);
 }
 function scoreProfessionalism(ig: InstagramAccount, hasEmail: boolean): number {
@@ -315,7 +312,6 @@ export async function getIndustryLeaderboard(
   }
 
   const search = await searchIndustry(industry);
-  // Enrich top N candidates
   const candidates = search.matches.slice(0, 20);
   const influencerMap = new Map(search.influencers.map((i) => [i.id, i]));
 
@@ -338,7 +334,6 @@ export async function getIndustryLeaderboard(
     const tt = profile.tiktoks?.[0] || null;
     const yt = profile.youtubes?.[0] || null;
 
-    // Use video metrics from the platform with the most views to score resonance
     let avgViews = 0;
     let resonanceFollowers = ig.followers;
 
@@ -363,7 +358,6 @@ export async function getIndustryLeaderboard(
       professionalism: scoreProfessionalism(ig, base.has_email),
     };
 
-    // Weighted composite: engagement + reach lead
     const composite =
       signals.reach * 0.25 +
       signals.engagement * 0.3 +
@@ -382,30 +376,30 @@ export async function getIndustryLeaderboard(
       instagram: {
         username: ig.username,
         followers: ig.followers,
-        engagement_rate: ig.engagement_rate,
-        average_likes: ig.average_likes,
-        average_comments: ig.average_comments,
-        verified: ig.verified,
+        engagement_rate: ig.engagement_rate || 0,
+        average_likes: ig.average_likes || 0,
+        average_comments: ig.average_comments || 0,
+        verified: ig.verified ?? false,
         engagement_growth_rate: ig.engagement_growth_rate ?? 0,
         profile_url: `https://instagram.com/${ig.username}`,
       },
       tiktok: tt ? {
         username: tt.username,
-        followers: tt.followers,
-        engagement_rate: tt.engagement_rate,
-        average_likes: tt.average_likes,
-        average_comments: tt.average_comments,
+        followers: tt.followers || 0,
+        engagement_rate: tt.engagement_rate || 0,
+        average_likes: tt.average_likes || 0,
+        average_comments: tt.average_comments || 0,
         average_plays: tt.average_plays ?? 0,
-        verified: tt.verified,
+        verified: tt.verified ?? false,
         profile_url: `https://tiktok.com/@${tt.username}`,
       } : null,
       youtube: yt ? {
         username: yt.username,
-        followers: yt.followers,
-        engagement_rate: yt.engagement_rate,
+        followers: yt.followers || 0,
+        engagement_rate: yt.engagement_rate || 0,
         average_views: yt.average_views ?? 0,
         average_likes: yt.average_likes ?? 0,
-        verified: yt.verified,
+        verified: yt.verified ?? false,
         profile_url: `https://youtube.com/@${yt.username}`,
       } : null,
       signals,
