@@ -13,6 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import * as XLSX from "xlsx";
+import upfluenceLogo from "@/assets/upfluence-logo.png.asset.json";
 import { fetchLeaderboard } from "../lib/upfluence.functions";
 
 export const Route = createFileRoute("/")({
