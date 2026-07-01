@@ -63,4 +63,5 @@ UPFLUENCE_CLIENT_SECRET=your_secret_here
 
 * **Sandbox API Cap Exhaustion:**
 * *The Issue:* To prove our logic, we load-tested the live engine across all industries. This continuous real-time verification completely exhausted our standard developer sandbox credit limits, triggering system restrictions.
-* *The Fix:* We built a dual-tiered presentation strategy. While the live backend data pipeline is verified and code-complete, we concurrently deployed a flawless **Interactive Design Prototype** populated with representative industry datasets. This allows the executive team to inspect the entire unconstrained UI layout and feature set without being blocked by sandbox access limits.
+* *The Fix:* We built a dual-tiered presentation strategy. While the live backend data pipeline is verified and code-complete, we concurrently deployed a flawless **Interactive Design Prototype** populated with representative industry datasets. This allows the executive team to inspect the entire unconstrained UI layout and feature set without being blocked by sandbox access limits. You can find it here: https://upfluence-henna.vercel.app/
+  
